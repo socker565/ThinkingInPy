@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
-import urllib2
-from lxml import etree
-from os import system
 import os
-from packageUtils import getDir,makeDir
+from packageUtils import getDir, makeDir
+from urlUtils import getHtml, getHtmlData
 
 """
 第一步: 从 http://www.zngirls.com/rank/sum/ 开始抓取MM点击头像的链接(注意是分页的)
@@ -24,10 +22,7 @@ header = {
 
 
 def mmRankSum():
-    req = urllib2.Request("http://www.zngirls.com/rank/sum/", headers=header)
-    html = urllib2.urlopen(req)
-    htmlData = html.read()
-    htmlPath = etree.HTML(htmlData)
+    htmlPath = getHtml("http://www.zngirls.com/rank/sum/", header, 10)
 
     # 首先获取页码数,然后用循环的方式挨个解析每一个页面
     # 取得所有div目录下class标签值为pagesYY的节点，再取得此节点下的div标签下a标签为href的属性值
@@ -55,10 +50,7 @@ def mmRankSum():
 
 
 def mmRankitem(url):
-    req = urllib2.Request(url, headers=header)
-    html = urllib2.urlopen(req)
-    htmlData = html.read()
-    htmlPath = etree.HTML(htmlData)
+    htmlPath = getHtml(url, header, 10)
 
     pages = htmlPath.xpath('//div[@class="rankli_imgdiv"]/a/@href')
     for i in range(len(pages)):
@@ -74,10 +66,7 @@ def mmRankitem(url):
 
 
 def getAlbums(girlUrl):
-    req = urllib2.Request(girlUrl, headers=header)
-    html = urllib2.urlopen(req)
-    htmlData = html.read()
-    htmlPath = etree.HTML(htmlData)
+    htmlPath = getHtml(girlUrl, header, 10)
 
     pages = htmlPath.xpath('//div[@class="igalleryli_div"]/a/@href')
     for i in range(len(pages)):
@@ -94,10 +83,7 @@ def getAlbums(girlUrl):
 
 
 def getPagePictures(albumsUrl):
-    req = urllib2.Request(albumsUrl, headers=header)
-    html = urllib2.urlopen(req)
-    htmlData = html.read()
-    htmlPath = etree.HTML(htmlData)
+    htmlPath = getHtml(albumsUrl, header, 10)
     pages = htmlPath.xpath('//div[@id="pages"]/a/@href')
     albums = []
     for i in range(len(pages)):
@@ -129,15 +115,12 @@ def savePictures(itemPagesurl):
         , "Accept": "image/webp,image/*,*/*;q=0.8"
     }
     try:
-        req = urllib2.Request(itemPagesurl, headers=header)
-        html = urllib2.urlopen(req)
-        htmlData = html.read()
-        htmlPath = etree.HTML(htmlData)
+        htmlPath = getHtml(itemPagesurl, header, 10)
         print(itemPagesurl)
         pages = htmlPath.xpath('//div[@class="gallery_wrapper"]/ul/img/@src')
         names = htmlPath.xpath('//div[@class="gallery_wrapper"]/ul/img/@alt')
     except Exception as error:
-        print("savePictures album parse Exception:" + error.args)
+        print("savePictures album parse Exception:")
     for i in range(len(pages)):
         print(pages[i])
         try:
@@ -146,14 +129,10 @@ def savePictures(itemPagesurl):
                 , "Connection": "keep-alive"
                 , "Referer": pages[i]
             }
-            req = urllib2.Request(pages[i], headers=headers)
-
-            urlHtml = urllib2.urlopen(req)
-
-            respHtml = urlHtml.read()
+            respHtml = getHtmlData(pages[i], headers, 10)
             pPath = getDir(-2) + '\\download\\'
             makeDir(pPath)
-            cPath=pPath+"meinv\\"
+            cPath = pPath + "meinv\\"
             makeDir(cPath)
             imgPath = '%s.jpg' % (cPath + names[i])
             if os.path.isfile(imgPath):
@@ -163,7 +142,7 @@ def savePictures(itemPagesurl):
                 binFile.write(respHtml);
                 binFile.close();
         except Exception as error:
-            print("savePictures pic fetch Exception:" + error.args)
+            print("savePictures pic fetch Exception:")
 
 
 mmRankSum()
