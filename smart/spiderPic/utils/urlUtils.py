@@ -1,5 +1,9 @@
+# -*-coding:utf-8-*-
 import re  # 导入正则表达式模块
 import requests  # python HTTP客户端 编写爬虫和测试服务器经常用到的模块
+
+import urllib2
+from lxml import etree
 
 
 def saveDoc(html, pattern, path):
@@ -19,3 +23,16 @@ def saveDoc(html, pattern, path):
 
 def getUrlName(url):
     return url.split("/")[-1]
+
+
+def getHtml(url, header, timeout):
+    htmlData = getHtmlData(url, header, timeout)
+    htmlPath = etree.HTML(htmlData)
+    return htmlPath
+
+
+def getHtmlData(url, header, timeout):
+    req = urllib2.Request(url, headers=header)
+    html = urllib2.urlopen(req, timeout=timeout)
+    htmlData = html.read()
+    return htmlData
