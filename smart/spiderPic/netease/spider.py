@@ -11,11 +11,12 @@ import requests
 
 import time
 import random
+from packageUtils import getDir, makeDir
 
 
 def _get_path(uid):
-    home_path = os.path.expanduser('~')
-    path = os.path.join(home_path, 'Pictures/python/lofter', uid)
+    home_path = getDir(-2)
+    path = os.path.join(home_path, 'download\lofter', uid)
     if not os.path.isdir(path):
         os.makedirs(path)
     return path
