@@ -9,17 +9,13 @@ import random  # 随机生成一个数，范围[0,1]
 import requests  # python HTTP客户端 编写爬虫和测试服务器经常用到的模块
 # import sys
 # sys.path.append('/spiderPic/..')
-import packageUtils
 from urlUtils import saveDoc
-from packageUtils import getDir, makeDir
+from pkgUtils import getLevelPath
 
 
 # 定义函数方法
 def spiderPic(html, keyword):
-    pPath = getDir(-2) + '\\download\\'
-    makeDir(pPath)
-    cPath = pPath + keyword + "\\"
-    makeDir(cPath)
+    cPath = getLevelPath(-2, '\\download\\baidu\\' + keyword + "\\")
     print(cPath)
     print('正在查找 ' + keyword + ' 对应的图片,下载中，请稍后......')
     pattern = '"objURL":"(.*?)"'
@@ -44,7 +40,7 @@ def spiderPic(html, keyword):
 
 # python的主方法
 if __name__ == '__main__':
-    word = '猪'  # input('请输入你要搜索的图片关键字：')
+    word = '树'  # input('请输入你要搜索的图片关键字：')
     result = requests.get(
         'http://image.baidu.com/search/index?tn=baiduimage&ps=1&ct=201326592&lm=-1&cl=2&nc=1&ie=utf-8&word=' + word)
 

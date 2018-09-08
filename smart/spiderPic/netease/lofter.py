@@ -8,12 +8,14 @@ import platform
 import requests
 import time
 import random
+import urlUtils
+import pkgUtils
 
 
 def _get_path(username):
     path = {
-        'Windows': 'D:/litreily/Pictures/python/lofter/' + username,
-        'Linux': '/mnt/d/litreily/Pictures/python/lofter/' + username
+        'Windows': pkgUtils.getLevelPath(-2, '/download/lofter/' + username),
+        'Linux': pkgUtils.getLevelPath(-2, '/download/lofter/' + username)
     }.get(platform.system())
     if not os.path.isdir(path):
         os.makedirs(path)
@@ -33,9 +35,12 @@ def _get_html(url, data, headers):
 
 def _get_blogid(username):
     try:
-        html = requests.get('http://%s.lofter.com' % username)
-        id_reg = r'src="http://www.lofter.com/control\?blogId=(.*)"'
-        blogid = re.search(id_reg, html.text).group(1)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) Chrome/50.0.2661.102'}
+        payload = {'wd': 'GitHub'}  # 搜索的关键字是GitHub
+        html = requests.get('http://%s.lofter.com' % username, params=payload, headers=headers)
+        html = requests.get('http://www.zngirls.com/')
+        id_reg = 'http://www.lofter.com/control\?blogId=(.*)'
+        blogid = re.search(id_reg, html.content).group(1)
         print('The blogid of %s is: %s' % (username, blogid))
         return blogid
     except Exception as e:
@@ -62,7 +67,7 @@ def _get_imgurls(username, blog, headers):
 
 def _capture_images(imgurl, path):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'}
+        'User-Agent': urlUtils.getUserAgent(2)}
     for i in range(1, 3):
         try:
             image_request = requests.get(imgurl, headers=headers, timeout=20)
@@ -99,8 +104,10 @@ def _create_query_data(blogid, timestamp, query_number):
 
 def main():
     # prepare paramters
-    username = 'litreily'
-    blogid = "491974164"#_get_blogid(username)
+    # username = 'litreily'
+    # blogid = "4520906"
+    username = 'qyaqy'
+    blogid = _get_blogid(username)
     query_number = 40
     time_pattern = re.compile('s%d\.time=(.*);s.*type' % (query_number - 1))
     blog_url_pattern = re.compile(r's[\d]*\.permalink="([\w_]*)"')
@@ -111,7 +118,7 @@ def main():
     url = 'http://%s.lofter.com/dwr/call/plaincall/ArchiveBean.getArchivePostByTime.dwr' % username
     data = _create_query_data(blogid, _get_timestamp(None, time_pattern), str(query_number))
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36',
+        'User-Agent': urlUtils.getUserAgent(2),
         'Host': username + '.lofter.com',
         'Referer': 'http://%s.lofter.com/view' % username,
         'Accept-Encoding': 'gzip, deflate'

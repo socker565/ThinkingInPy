@@ -4,22 +4,28 @@
 # date: 2018.03.07
 """Capture pictures from lofter with username."""
 
+import random
 import re
-import os
-
-import requests
-
 import time
+<<<<<<< HEAD
 import random
 from packageUtils import getDir, makeDir
+=======
+>>>>>>> 316663a5d561f714be7f0f517a3cc1542bb89e3f
 
+import requests
+import urlUtils
 
+<<<<<<< HEAD
 def _get_path(uid):
     home_path = getDir(-2)
     path = os.path.join(home_path, 'download\lofter', uid)
     if not os.path.isdir(path):
         os.makedirs(path)
     return path
+=======
+from pkgUtils import getSysPath
+>>>>>>> 316663a5d561f714be7f0f517a3cc1542bb89e3f
 
 
 def _get_html(url, data, headers):
@@ -64,7 +70,7 @@ def _get_imgurls(username, blog, headers):
 
 def _capture_images(imgurl, path):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'}
+        'User-Agent': urlUtils.getUserAgent(2)}
     for i in range(1, 3):
         try:
             image_request = requests.get(imgurl, headers=headers, timeout=20)
@@ -100,21 +106,23 @@ def _create_query_data(blogid, timestamp, query_number):
 
 
 def main():
-    # prepare paramters
-    username = 'kikyoulq'
-    blogid = "491974164"  # _get_blogid(username)
+    # liujing1167 503457238
+    # kikyoulq  491974164
+    # 945979  492415361
+    username = 'liujing1167'
+    blogid = "503457238"  # _get_blogid(username) kikyoulq  491974164  945979  492415361 liujing1167 503457238
     query_number = 40
     time_pattern = re.compile('s%d\.time=(.*);s.*type' % (query_number - 1))
     blog_url_pattern = re.compile(r's[\d]*\.permalink="([\w_]*)"')
 
     # creat path to save imgs
-    path = _get_path(username)
+    path = getSysPath('Pictures/python/lofter', username)
 
     # parameters of post packet
     url = 'http://%s.lofter.com/dwr/call/plaincall/ArchiveBean.getArchivePostByTime.dwr' % username
     data = _create_query_data(blogid, _get_timestamp(None, time_pattern), str(query_number))
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36',
+        'User-Agent': urlUtils.getUserAgent(2),
         'Host': username + '.lofter.com',
         'Referer': 'http://%s.lofter.com/view' % username,
         'Accept-Encoding': 'gzip, deflate'

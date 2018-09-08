@@ -2,8 +2,32 @@
 import re  # 导入正则表达式模块
 import requests  # python HTTP客户端 编写爬虫和测试服务器经常用到的模块
 
-import urllib2
 from lxml import etree
+from urllib.request import urlopen
+import urllib.request
+
+
+def getHtml(url, header, timeout):
+    htmlData = getHtmlData(url, header, timeout)
+    htmlPath = etree.HTML(htmlData)
+    return htmlPath
+
+
+def getHtmlData(url, header, timeout):
+    req = urllib.request.Request(url, headers=header)
+    html = urllib.request.urlopen(req, timeout=timeout)
+    htmlData = html.read()  # str(html.read(), 'utf-8')
+    return htmlData
+
+
+def getUserAgent(type):
+    if type == 1:
+        return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
+    elif type == 2:
+        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'
+    elif type == 3:
+        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'
+    return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
 
 
 def saveDoc(html, pattern, path):
@@ -24,15 +48,18 @@ def saveDoc(html, pattern, path):
 def getUrlName(url):
     return url.split("/")[-1]
 
-
-def getHtml(url, header, timeout):
-    htmlData = getHtmlData(url, header, timeout)
-    htmlPath = etree.HTML(htmlData)
-    return htmlPath
-
-
-def getHtmlData(url, header, timeout):
-    req = urllib2.Request(url, headers=header)
-    html = urllib2.urlopen(req, timeout=timeout)
-    htmlData = html.read()
-    return htmlData
+# session = requests.session()
+# url = 'http://qyaqy.lofter.com'
+# # headers在这里不必须，嗯，还是加上吧...
+# headers = {
+#     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0",
+#     'host': 'zqyjbg.com',
+#     'Accept-Language': 'zh-CN,zh;q=0.8',
+#     'Accept-Encoding': 'gzip, deflate, sdch',
+#     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+#     'Upgrade-Insecure-Requests': '1',
+#     'Connection': 'keep-alive',
+#     'Cookie': ''
+# }
+# r = session.get(url, headers=headers, verify=False)
+# print(r.content)
