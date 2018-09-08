@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 import os
-from packageUtils import getDir, makeDir
-from urlUtils import getHtml, getHtmlData
+
+from urlUtils import getUserAgent, getHtml, getHtmlData
+from pkgUtils import getLevelPath
 
 """
 第一步: 从 http://www.zngirls.com/rank/sum/ 开始抓取MM点击头像的链接(注意是分页的)
@@ -11,7 +12,7 @@ from urlUtils import getHtml, getHtmlData
 """
 
 header = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
+    "User-Agent": getUserAgent(0)
     , "Connection": "keep-alive"
 }
 
@@ -109,10 +110,10 @@ def getPagePictures(albumsUrl):
 def savePictures(itemPagesurl):
     global pages
     header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
-        , "Connection": "keep-alive"
-        , "Referer": "image / webp, image / *, * / *;q = 0.8"
-        , "Accept": "image/webp,image/*,*/*;q=0.8"
+        "User-Agent": getUserAgent(1),
+        "Connection": "keep-alive",
+        "Referer": "image / webp, image / *, * / *;q = 0.8",
+        "Accept": "image/webp,image/*,*/*;q=0.8"
     }
     try:
         htmlPath = getHtml(itemPagesurl, header, 10)
@@ -125,15 +126,12 @@ def savePictures(itemPagesurl):
         print(pages[i])
         try:
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
-                , "Connection": "keep-alive"
-                , "Referer": pages[i]
+                "User-Agent": getUserAgent(1),
+                "Connection": "keep-alive",
+                "Referer": pages[i]
             }
             respHtml = getHtmlData(pages[i], headers, 10)
-            pPath = getDir(-2) + '\\download\\'
-            makeDir(pPath)
-            cPath = pPath + "meinv\\"
-            makeDir(cPath)
+            cPath = getLevelPath(-2, '\\download\\meinv\\')
             imgPath = '%s.jpg' % (cPath + names[i])
             if os.path.isfile(imgPath):
                 pass

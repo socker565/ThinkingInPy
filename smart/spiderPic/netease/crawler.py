@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-#coding=gbk
+# coding=gbk
 
 import requests
 from lxml import etree
@@ -12,13 +12,12 @@ import argparse
 import configparser
 import shlex
 import time
-
+import urlUtils
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+    "User-Agent": urlUtils.getUserAgent(1),
     "Upgrade-Insecure-Requests": "1"
-    }
+}
 PROCESSES = multiprocessing.cpu_count()
 
 
@@ -27,7 +26,7 @@ def find_latest_page(blogname):
     url = "http://{}.lofter.com".format(blogname)
     print("尝试下载首页并抓取需要的数据： ", url)
     resp = requests.get(url, headers=HEADERS)
-    pattern = re.compile(url+r'(/post/\S+)"')
+    pattern = re.compile(url + r'(/post/\S+)"')
     url_sub = url + re.search(pattern, resp.text).group(1)
     return url_sub
 
@@ -39,7 +38,7 @@ def page_download_n_parse(url, proxies=None, timeout=None, retry_times=0):
     if resp.status_code != 200:
         if retry_times < 3:
             print('尝试下载子页途中出现错误，重试' % resp.status_code)
-            retry_times +=1
+            retry_times += 1
             return page_download_n_parse(url, proxies, timeout, retry_times)
         else:
             print('无法下载页面，请稍后再重试，或使用代理IP。')
@@ -55,7 +54,7 @@ def page_download_n_parse(url, proxies=None, timeout=None, retry_times=0):
     item['url'] = url
     item["image_urls"] = image_urls
     if text:
-        item["text"] = re.sub(r'\s+',' ',text.strip())
+        item["text"] = re.sub(r'\s+', ' ', text.strip())
     item["tags"] = tags
     item['proxies'] = proxies
 
@@ -125,14 +124,14 @@ class TextWriter(object):
     def __init__(self, filename):
         if not os.path.isdir(filename):
             os.mkdir(filename)
-        file_path = os.path.join(filename, '0.'+filename+'.txt')
+        file_path = os.path.join(filename, '0.' + filename + '.txt')
         self.file = open(file_path, 'w')
 
     def close(self):
         self.file.close()
 
     def process_item(self, item):
-        self.file.write(item['url']+ '\n')
+        self.file.write(item['url'] + '\n')
         if item.get("image_urls"):
             for url in item['image_urls']:
                 line = url.split('?')[0] + '\n'
@@ -165,7 +164,7 @@ def main(blogname, timesleep=0):
     url_sub = find_latest_page(blogname)
     image = ImagesDownloader()
     text = TextWriter(blogname)
-    with futures.ThreadPoolExecutor(max_workers=PROCESSES*2) as ex:
+    with futures.ThreadPoolExecutor(max_workers=PROCESSES * 2) as ex:
         while url_sub:
             # 如需设置proxies, 在下行代码设置设置
             item, url_sub = page_download_n_parse(url_sub, proxies=None,
