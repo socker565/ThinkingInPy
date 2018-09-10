@@ -7,11 +7,25 @@
 import random
 import re
 import time
+<<<<<<< HEAD
+import random
+from packageUtils import getDir, makeDir
+=======
+>>>>>>> 316663a5d561f714be7f0f517a3cc1542bb89e3f
 
 import requests
 import urlUtils
 
+<<<<<<< HEAD
+def _get_path(uid):
+    home_path = getDir(-2)
+    path = os.path.join(home_path, 'download\lofter', uid)
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    return path
+=======
 from pkgUtils import getSysPath
+>>>>>>> 316663a5d561f714be7f0f517a3cc1542bb89e3f
 
 
 def _get_html(url, data, headers):
