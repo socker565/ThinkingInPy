@@ -10,6 +10,7 @@ import time
 import random
 import urlUtils
 import pkgUtils
+import slmUtils
 
 
 def _get_path(username):
@@ -38,7 +39,6 @@ def _get_blogid(username):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) Chrome/50.0.2661.102'}
         payload = {'wd': 'GitHub'}  # 搜索的关键字是GitHub
         html = requests.get('http://%s.lofter.com' % username, params=payload, headers=headers)
-        html = requests.get('http://www.zngirls.com/')
         id_reg = 'http://www.lofter.com/control\?blogId=(.*)'
         blogid = re.search(id_reg, html.content).group(1)
         print('The blogid of %s is: %s' % (username, blogid))
@@ -107,7 +107,7 @@ def main():
     # username = 'litreily'
     # blogid = "4520906"
     username = 'qyaqy'
-    blogid = _get_blogid(username)
+    blogid = slmUtils.get_lofter_id(username)
     query_number = 40
     time_pattern = re.compile('s%d\.time=(.*);s.*type' % (query_number - 1))
     blog_url_pattern = re.compile(r's[\d]*\.permalink="([\w_]*)"')
