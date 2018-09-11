@@ -28,6 +28,7 @@ def getUrlName(url):
 
 
 def lofter_name():
+    # ''http://imglf6.nosdn0.126.net/img/      eHJBeHlSUFlxWXpoT2Juc1ZCZTMrQnBVcnhVeFZIZThGa0JSTWFxZ29OcEZyY0JDb2JEYXRBPT0.jpg?imageView&thumbnail=1680x0&quality=96&stripmeta=0&type=jpg''
     imgurl = 'http://imglf6.nosdn0.126.net/img/eHJBeHlSUFlxWXd6REQ0eVJnVEtjZG41ZTNFTzFqSlVORkwzaU5hSkdONzRxcFVmM2RvM1V3PT0.jpg?imageView&thumbnail=1680x0&quality=96&stripmeta=0&type=jpg'
     print(re.search(r'(jpg|png|gif)', imgurl).group(0))
     print(getUrlName(imgurl.split("?")[0]))

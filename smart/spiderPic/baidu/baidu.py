@@ -4,12 +4,12 @@
 # Data : 2018/01/10
 
 import os
-import random  # 随机生成一个数，范围[0,1]
 
 import requests  # python HTTP客户端 编写爬虫和测试服务器经常用到的模块
+
 # import sys
 # sys.path.append('/spiderPic/..')
-from urlUtils import saveDoc
+import saveUtils
 from pkgUtils import getLevelPath
 
 
@@ -19,7 +19,7 @@ def spiderPic(html, keyword):
     print(cPath)
     print('正在查找 ' + keyword + ' 对应的图片,下载中，请稍后......')
     pattern = '"objURL":"(.*?)"'
-    saveDoc(html, pattern, cPath)
+    saveUtils.save_img(html, pattern, cPath)
     # for addr in re.findall('"objURL":"(.*?)"', html, re.S):  # 查找URL
     #     print('正在爬取URL地址：' + str(addr))#[0:30] + '...')  # 爬取的地址长度超过30时，用'...'代替后面的内容
     #

@@ -11,6 +11,7 @@ import random
 import urlUtils
 import pkgUtils
 import slmUtils
+import saveUtils
 
 
 def _get_path(username):
@@ -63,28 +64,6 @@ def _get_imgurls(username, blog, headers):
     imgurls = re.findall(r'bigimgsrc="(.*?)"', blog_html)
     print('Blog\t%s\twith %d\tpictures' % (blog_url, len(imgurls)))
     return imgurls
-
-
-def _capture_images(imgurl, path):
-    headers = {
-        'User-Agent': urlUtils.getUserAgent(2)}
-    for i in range(1, 3):
-        try:
-            image_request = requests.get(imgurl, headers=headers, timeout=20)
-            if image_request.status_code == 200:
-                open(path, 'wb').write(image_request.content)
-                break
-        except requests.exceptions.ConnectionError as e:
-            print('\tGet %s failed\n\terror:%s' % (imgurl, e))
-            if i == 1:
-                imgurl = re.sub('^http://img.*?\.', 'http://img.', imgurl)
-                print('\tRetry ' + imgurl)
-            else:
-                print('\tRetry fail')
-        except Exception as e:
-            print(e)
-        finally:
-            pass
 
 
 def _create_query_data(blogid, timestamp, query_number):
@@ -143,9 +122,11 @@ def main():
             # download imgs
             for imgurl in imgurls:
                 index_img += 1
-                paths = '%s/%d.%s' % (path, index_img, re.search(r'(jpg|png|gif)', imgurl).group(0))
+                img_name = pkgUtils.get_md5_name(imgurl)
+                img_type = re.search(r'(jpg|png|gif)', imgurl).group(0)
+                paths = '%s/%s.%s' % (path, img_name, img_type)
                 print('{}\t{}'.format(index_img, paths))
-                _capture_images(imgurl, paths)
+                saveUtils.save_images(imgurl, paths)
 
         if num_new_blogs != query_number:
             print('------------------------------- stop line -------------------------------')
