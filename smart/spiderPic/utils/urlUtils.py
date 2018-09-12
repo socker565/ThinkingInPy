@@ -4,7 +4,7 @@ import requests  # python HTTP客户端 编写爬虫和测试服务器经常用�
 
 from lxml import etree
 from urllib.request import urlopen
-import urllib.request
+from urllib.request import Request
 
 
 def getHtml(url, header, timeout):
@@ -14,20 +14,20 @@ def getHtml(url, header, timeout):
 
 
 def getHtmlData(url, header, timeout):
-    req = urllib.request.Request(url, headers=header)
-    html = urllib.request.urlopen(req, timeout=timeout)
+    req = Request(url, headers=header)
+    html = urlopen(req, timeout=timeout)
     htmlData = html.read()  # str(html.read(), 'utf-8')
     return htmlData
 
 
 def getUserAgent(type):
     if type == 1:
-        return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
+        return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.1.2743.116 Safari/537.36"
     elif type == 2:
-        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'
+        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.1.3325.146 Safari/537.36'
     elif type == 3:
         return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'
-    return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"
+    return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.21.2743.116 Safari/537.36"
 
 
 def saveDoc(html, pattern, path):

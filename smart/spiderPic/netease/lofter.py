@@ -35,21 +35,6 @@ def _get_html(url, data, headers):
     return html
 
 
-def _get_blogid(username):
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) Chrome/50.0.2661.102'}
-        payload = {'wd': 'GitHub'}  # 搜索的关键字是GitHub
-        html = requests.get('http://%s.lofter.com' % username, params=payload, headers=headers)
-        id_reg = 'http://www.lofter.com/control\?blogId=(.*)'
-        blogid = re.search(id_reg, html.content).group(1)
-        print('The blogid of %s is: %s' % (username, blogid))
-        return blogid
-    except Exception as e:
-        print('get blogid from http://%s.lofter.com failed' % username)
-        print('please check your username.')
-        exit(1)
-
-
 def _get_timestamp(html, time_pattern):
     if not html:
         timestamp = round(time.time() * 1000)  # first timestamp(ms)
@@ -77,7 +62,7 @@ def _create_query_data(blogid, timestamp, query_number):
             'c0-param1': 'number:' + timestamp,
             'c0-param2': 'number:' + query_number,
             'c0-param3': 'boolean:false',
-            'batchId': '123456'}
+            'batchId': '622242'}
     return data
 
 

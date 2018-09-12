@@ -40,7 +40,7 @@ def spiderPic(html, keyword):
 
 # python的主方法
 if __name__ == '__main__':
-    word = '树'  # input('请输入你要搜索的图片关键字：')
+    word = '桃'  # input('请输入你要搜索的图片关键字：')
     result = requests.get(
         'http://image.baidu.com/search/index?tn=baiduimage&ps=1&ct=201326592&lm=-1&cl=2&nc=1&ie=utf-8&word=' + word)
 

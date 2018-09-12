@@ -12,7 +12,7 @@ from pkgUtils import getLevelPath
 """
 
 header = {
-    "User-Agent": getUserAgent(0)
+    "User-Agent": getUserAgent(1)
     , "Connection": "keep-alive"
 }
 
