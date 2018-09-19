@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 import os
+from random import random
+from time import sleep
 
-from urlUtils import getUserAgent, getHtml, getHtmlData
 from pkgUtils import getLevelPath
+from urlUtils import getUserAgent, getHtml, getHtmlData
 
 """
 第一步: 从 http://www.zngirls.com/rank/sum/ 开始抓取MM点击头像的链接(注意是分页的)
@@ -12,7 +14,7 @@ from pkgUtils import getLevelPath
 """
 
 header = {
-    "User-Agent": getUserAgent(1)
+    "User-Agent": getUserAgent(6)
     , "Connection": "keep-alive"
 }
 
@@ -23,7 +25,7 @@ header = {
 
 
 def mmRankSum():
-    htmlPath = getHtml("http://www.zngirls.com/rank/sum/", header, 10)
+    htmlPath = getHtml("https://www.zngirls.com/rank/sum/", header, 10)
 
     # 首先获取页码数,然后用循环的方式挨个解析每一个页面
     # 取得所有div目录下class标签值为pagesYY的节点，再取得此节点下的div标签下a标签为href的属性值
@@ -35,10 +37,9 @@ def mmRankSum():
     for i in range(length):
         subTitle = pages[i]
         pageItem = "http://www.zngirls.com/rank/sum/" + subTitle
-        try:
-            albums.index(pageItem)
+        if pageItem in albums:
             continue
-        except ValueError as error:
+        else:
             albums.append(pageItem)
             print("pageItem:" + pageItem)
             mmRankitem(pageItem)
@@ -52,7 +53,6 @@ def mmRankSum():
 
 def mmRankitem(url):
     htmlPath = getHtml(url, header, 10)
-
     pages = htmlPath.xpath('//div[@class="rankli_imgdiv"]/a/@href')
     for i in range(len(pages)):
         # print  ("http://www.zngirls.com" + pages[i] + "album/")
@@ -67,13 +67,13 @@ def mmRankitem(url):
 
 
 def getAlbums(girlUrl):
-    htmlPath = getHtml(girlUrl, header, 10)
-
+    htmlPath = getHtml(girlUrl, header, 15)
     pages = htmlPath.xpath('//div[@class="igalleryli_div"]/a/@href')
     for i in range(len(pages)):
         albumPath = "http://www.zngirls.com" + pages[i]
         # print(albumPath)
         getPagePictures(albumPath)
+        sleep(random.randint(1, 3))
 
 
 """
@@ -86,6 +86,7 @@ def getAlbums(girlUrl):
 def getPagePictures(albumsUrl):
     htmlPath = getHtml(albumsUrl, header, 10)
     pages = htmlPath.xpath('//div[@id="pages"]/a/@href')
+    albumName = htmlPath.xpath('//div[@class="albumTitle"]/h1/text()')[0]  # ("//body//h1[1]/text()")
     albums = []
     for i in range(len(pages)):
         screenPath = "http://www.zngirls.com" + pages[i]  # g/21450
@@ -97,7 +98,7 @@ def getPagePictures(albumsUrl):
         finally:
             # if i==0:
             # print(screenPath)
-            savePictures(screenPath)
+            savePictures(screenPath, albumName)
 
 
 """
@@ -107,7 +108,7 @@ def getPagePictures(albumsUrl):
 """
 
 
-def savePictures(itemPagesurl):
+def savePictures(itemPagesurl, albumName):
     global pages
     header = {
         "User-Agent": getUserAgent(1),
@@ -117,13 +118,13 @@ def savePictures(itemPagesurl):
     }
     try:
         htmlPath = getHtml(itemPagesurl, header, 10)
-        print(itemPagesurl)
+        print(itemPagesurl)  # http://www.zngirls.com/g/27439/6.html
         pages = htmlPath.xpath('//div[@class="gallery_wrapper"]/ul/img/@src')
         names = htmlPath.xpath('//div[@class="gallery_wrapper"]/ul/img/@alt')
     except Exception as error:
         print("savePictures album parse Exception:")
     for i in range(len(pages)):
-        print(pages[i])
+        print(pages[i])  # https://t1.onvshen.com:85/gallery/22784/27439/s/015.jpg
         try:
             headers = {
                 "User-Agent": getUserAgent(1),
@@ -131,7 +132,7 @@ def savePictures(itemPagesurl):
                 "Referer": pages[i]
             }
             respHtml = getHtmlData(pages[i], headers, 10)
-            cPath = getLevelPath(-2, '\\download\\meinv\\')
+            cPath = getLevelPath(-2, '\\download\\meinv\\' + albumName + "\\")
             imgPath = '%s.jpg' % (cPath + names[i])
             if os.path.isfile(imgPath):
                 pass

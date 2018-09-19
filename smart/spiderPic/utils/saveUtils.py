@@ -3,6 +3,7 @@ import requests
 import re
 import os
 import pkgUtils
+import platform
 
 
 def save_img(html, pattern, path):
@@ -50,6 +51,35 @@ def save_images(img_url, path):
             pass
 
 
+def save_string(str, path):
+    if is_file_exist(path):
+        pass
+    try:
+        open(path, 'wb').write(bytes(str.encode("utf-8")))
+    except Exception as e:
+        print(e)
+    finally:
+        pass
+
+
+def _get_path(username):
+    path = {
+        'Windows': pkgUtils.getLevelPath(-2, '/download/lofter/' + username),
+        'Linux': pkgUtils.getLevelPath(-2, '/download/lofter/' + username)
+    }.get(platform.system())
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    return path
+
+
+def test_save_string():
+    imgurls = {"a", "b", "c"}
+    all_img_urls = "\r\n".join(imgurls)
+    path = _get_path("vikomo")
+    all_img_paths = '%s/%s.%s' % (path, "vikomo", "txt")
+    save_string(all_img_urls, all_img_paths)
+
+
 # print(str(1))
 def test(imgPath):
     if os.path.isfile(imgPath):
@@ -64,4 +94,5 @@ def is_file_exist(path):
 
 
 if __name__ == '__main__':
-    test(pkgUtils.getLevelPath(-2, '\\download\\lofter\\qyaqy\\2a3d7b945dc4ae7941c2353173ce5e13e.jpg'))
+    #test(pkgUtils.getLevelPath(-2, '\\download\\lofter\\qyaqy\\2a3d7b945dc4ae7941c2353173ce5e13e.jpg'))
+    test_save_string()

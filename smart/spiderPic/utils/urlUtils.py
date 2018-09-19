@@ -22,12 +22,20 @@ def getHtmlData(url, header, timeout):
 
 def getUserAgent(type):
     if type == 1:
-        return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.1.2743.116 Safari/537.36"
+        return "Mozilla/6.0 (Windows NT 7.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.15.2743.116 Safari/57.36"
     elif type == 2:
-        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.1.3325.146 Safari/537.36'
+        return 'Mozilla/5.0 (Windows NT 8.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.11.3325.146 Safari/27.36'
     elif type == 3:
-        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36'
-    return "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.21.2743.116 Safari/537.36"
+        return 'Mozilla/7.0 (Windows NT 9.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.20.33.146 Safari/17.36'
+    elif type == 4:
+        return 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0'
+    elif type == 5:
+        return 'Mozilla/5.0 (Android; Mobile; rv:14.0) Gecko/14.0 Firefox/14.0'
+    elif type == 6:
+        return 'Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19'
+    elif type == 7:
+        return 'Mozilla/5.0 (Linux; U; Android 4.0.4; en-gb; GT-I9300 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'
+    return "Mozilla/8.0 (Windows NT 10.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.21.27.116 Safari/47.36"
 
 
 def saveDoc(html, pattern, path):

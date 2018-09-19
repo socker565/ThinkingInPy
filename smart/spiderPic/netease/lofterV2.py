@@ -16,8 +16,8 @@ import saveUtils
 
 def _get_path(username):
     path = {
-        'Windows': pkgUtils.getLevelPath(-2, '/download/lofter/' + username),
-        'Linux': pkgUtils.getLevelPath(-2, '/download/lofter/' + username)
+        'Windows': pkgUtils.getLevelPath(-2, '/download/lofter/' + username+"/test"),
+        'Linux': pkgUtils.getLevelPath(-2, '/download/lofter/' + username+"/test")
     }.get(platform.system())
     if not os.path.isdir(path):
         os.makedirs(path)
@@ -41,14 +41,6 @@ def _get_timestamp(html, time_pattern):
     else:
         timestamp = time_pattern.search(html).group(1)
     return str(timestamp)
-
-
-def _get_imgurls(username, blog, headers):
-    blog_url = 'http://%s.lofter.com/post/%s' % (username, blog)
-    blog_html = requests.get(blog_url, headers=headers).text
-    imgurls = re.findall(r'bigimgsrc="(.*?)"', blog_html)
-    print('Blog\t%s\twith %d\tpictures' % (blog_url, len(imgurls)))
-    return imgurls
 
 
 def _create_query_data(blogid, timestamp, query_number):
@@ -93,7 +85,6 @@ def main():
     }
     num_blogs = 0
     num_imgs = 0
-    index_img = 0
     print('------------------------------- start line ------------------------------')
     while True:
         html = _get_html(url, data, headers).text
@@ -104,22 +95,26 @@ def main():
         if num_new_blogs != 0:
             print('NewBlogs:%d\tTotalBolgs:%d' % (num_new_blogs, num_blogs))
             # get imgurls from new_blogs
-            imgurls = []
             for blog in new_blogs:
-                imgurls.extend(_get_imgurls(username, blog, headers))
-
-            all_img_urls = "\r\n".join(imgurls)
-            all_img_paths = '%s/%s.%s' % (path, username, "txt")
-            saveUtils.save_string(all_img_urls, all_img_paths)
-            num_imgs += len(imgurls)
-            # download imgs
-            for imgurl in imgurls:
-                index_img += 1
-                img_name = username + "_" + str(index_img)  # pkgUtils.get_md5_name(imgurl)
-                img_type = re.search(r'(jpg|png|gif)', imgurl).group(0)
-                paths = '%s/%s.%s' % (path, img_name, img_type)
-                print('{}\t{}'.format(index_img, paths))
-                saveUtils.save_images(imgurl, paths)
+                blog_url = 'http://%s.lofter.com/post/%s' % (username, blog)
+                blog_html = requests.get(blog_url, headers=headers).text
+                imgurls = re.findall(r'bigimgsrc="(.*?)"', blog_html)
+                day = re.findall(r'<div class="day"><a href="%s">(.*?)</a></div>' % (blog_url), blog_html,
+                                 re.I | re.S | re.M)[0]
+                month = re.findall(r'<div class="month"><a href="%s">(.*?)</a></div>' % (blog_url), blog_html,
+                                   re.I | re.S | re.M)[0]
+                top_name = blog + "_" + day + "_" + month
+                print('Blog\t%s\twith %d\tpictures' % (blog_url, len(imgurls)))
+                num_imgs += len(imgurls)
+                # download imgs
+                index_img = 0
+                for imgurl in imgurls:
+                    index_img += 1
+                    img_name = username + "_" + top_name + "_" + str(index_img)  # pkgUtils.get_md5_name(imgurl)
+                    img_type = re.search(r'(jpg|png|gif)', imgurl).group(0)
+                    paths = '%s/%s.%s' % (path , img_name, img_type)
+                    print('{}\t{}'.format(index_img, paths))
+                    saveUtils.save_images(imgurl, paths)
 
         if num_new_blogs != query_number:
             print('------------------------------- stop line -------------------------------')
